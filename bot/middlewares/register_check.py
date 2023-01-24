@@ -18,25 +18,16 @@ class RegisterCheck(BaseMiddleware):
         data: Dict[str, Any]
     ) -> Any:
         
-        session_maker: sessionmaker = data['session_maker']
+        if event.web_app_data:
+            return await handler(event, data)
 
-        async with session_maker() as session:
-            async with session.begin():
-                session: AsyncSession
-                result = await session.execute(select(User).where(User.user_id == event.from_user.id))
-                result: ScalarResult
-                user: User = result.one_or_none()
+        session_nmaker = data['session_maker']
+        user = event.from_user
 
-                if user:
-                    pass
-                else:
-                    user = User(
-                        user_id=event.from_user.id,
-                        username=event.from_user.username
-                    )
-                    await session.merge(user)
-                    if isinstance(event, Message):
-                        await event.answer('Регистрация успешна.')
-                    else:
-                        await event.message.answer('Регистрация успешна.')
+
+        if not await is_user_exists(user_id=event.from_user.id, session_maker=session_maker, redis=redis):
+            await create_user(user_id=event.from_user.id,
+                              username=event.from_user.username, session_maker=session_maker, locale=user.language_code)
+            await data['bot'].send_message(event.from_user.id, 'Ты успешно зарегистрирован(а)!')
+
         return await handler(event, data)
