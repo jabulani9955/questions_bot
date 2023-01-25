@@ -3,11 +3,12 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from aiogram.types import  KeyboardButton
 
 from commands.callback_data_states import TestCallbackData
-from db.db_commands import get_from_db
+from db.config import QUERIES
+from db.db import get_data_from_db
 
 
 async def questions(message: types.Message):
-    all_questions = await get_from_db(query="SELECT * FROM questions;")
+    all_questions = await get_data_from_db(query=QUERIES["GET_ALL_QUESTIONS"])
 
     for question in all_questions:
         questions_markup = InlineKeyboardBuilder()

@@ -2,7 +2,6 @@ import os
 import logging
 
 import asyncio
-from dotenv import load_dotenv
 from aiogram import Dispatcher, Bot
 from aiogram.types import BotCommand
 from sqlalchemy.engine import URL
@@ -10,8 +9,6 @@ from sqlalchemy.engine import URL
 from commands import register_user_commands, bot_commands
 # from db import BaseModel, create_async_engine, get_session_maker, proceed_schemas
 # from db.db_commands import DataBase
-
-load_dotenv()
 
 logging.basicConfig(
     filename='log.log', 
