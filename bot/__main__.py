@@ -8,7 +8,8 @@ from aiogram.types import BotCommand
 from sqlalchemy.engine import URL
 
 from commands import register_user_commands, bot_commands
-from db import BaseModel, create_async_engine, get_session_maker, proceed_schemas
+# from db import BaseModel, create_async_engine, get_session_maker, proceed_schemas
+# from db.db_commands import DataBase
 
 load_dotenv()
 
@@ -32,21 +33,19 @@ async def main() -> None:
     await bot.set_my_commands(commands=commands_for_bot)
 
     register_user_commands(dp)
+    # postgres_url = URL.create(
+    #     'postgresql+asyncpg',
+    #     host='localhost',
+    #     username=os.getenv('db_user'),
+    #     database=os.getenv('db_name'),
+    #     password=os.getenv('db_pass'),
+    #     port=os.getenv('db_port')
+    # )
 
-    postgres_url = URL.create(
-        'postgresql+asyncpg',
-        host='localhost',
-        username=os.getenv('db_user'),
-        database=os.getenv('db_name'),
-        password=os.getenv('db_pass'),
-        port=os.getenv('db_port')
-    )
-
-    async_engine = create_async_engine(postgres_url)
-    session_maker = get_session_maker(async_engine)
-    await proceed_schemas(async_engine, BaseModel.metadata)
-
-    await dp.start_polling(bot ,session_maker=session_maker)
+    # async_engine = create_async_engine(postgres_url)
+    # session_maker = get_session_maker(async_engine)
+    # await proceed_schemas(async_engine, BaseModel.metadata)
+    await dp.start_polling(bot)
 
 
 if __name__ == '__main__':

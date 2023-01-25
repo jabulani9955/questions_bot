@@ -1,4 +1,6 @@
-from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.ext.declarative import declarative_base
+# import psycopg2
+
+# BaseModel = declarative_base()
 
 
-BaseModel = declarative_base()
