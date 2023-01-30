@@ -99,8 +99,31 @@ GET_QUERIES = {
         JOIN answers ON questions.id = answers.question_id
     """,
     "GET_ALL_ANSWERS": """
-        SELECT answers.answer, answers.is_correct
+        SELECT id, question_id, answer, is_correct
         FROM answers
+    """,
+    "GET_CORRECT_ANSWER": """
+        SELECT
+            answers.answer,
+            answers.id as answer_id
+        FROM questions
+        JOIN answers ON questions.id = answers.question_id
+        WHERE questions.id = %s and answers.is_correct = true
+    """,
+    "GET_NUM_QUESTIONS": """
+        SELECT COUNT(DISTINCT questions.id) as n_questions
+        FROM questions;
+    """,
+    "GET_QUESTION_BY_ID": """
+        SELECT 
+            questions.id as question_id, 
+            questions.question, 
+            answers.id as answer_id, 
+            answers.answer, 
+            answers.is_correct
+        FROM questions
+        JOIN answers ON questions.id = answers.question_id
+        WHERE question_id = %s
     """
 }
 

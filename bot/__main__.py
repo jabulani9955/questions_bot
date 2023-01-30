@@ -4,6 +4,7 @@ import logging
 import asyncio
 from aiogram import Dispatcher, Bot
 from aiogram.types import BotCommand
+from aiogram.fsm.storage.memory import MemoryStorage
 from sqlalchemy.engine import URL
 
 from commands import register_user_commands, bot_commands
@@ -18,7 +19,6 @@ logging.basicConfig(
 
 
 async def main() -> None:
-
     commands_for_bot = []
 
     for cmd in bot_commands:
@@ -26,7 +26,6 @@ async def main() -> None:
 
     dp = Dispatcher()
     bot = Bot(token=os.getenv('BOT_TOKEN'))
-
     await bot.set_my_commands(commands=commands_for_bot)
 
     register_user_commands(dp)
