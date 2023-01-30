@@ -13,13 +13,15 @@ from commands.callback_data_states import TestCallbackData
 from db.config import GET_QUERIES
 from db.db import (
     run_query, 
-    connect_to_db, 
-    get_all_questions, 
+    connect_to_db,
     get_correct_answer, 
     get_questions_num, 
-    get_question_by_id
+    get_question_by_id,
+    add_user,
+    add_user_answer
 )
 from strucrures.fsm_groups import QuestionsState
+from strucrures.keyboards import MENU_BOARD
 
 
 # df = asyncio.run(run_query(GET_QUERIES['GET_QUESTION_AND_ANSWER']))
@@ -47,7 +49,7 @@ async def call_questions(callback: types.CallbackQuery):
     shuffle(answers)
     
     markup = await generate_answers_keyboard(1)
-    await callback.message.answer(f"Вопрос {1}/{n_questions}:\n{question_text}", reply_markup=markup)
+    await callback.message.edit_text(f"Вопрос {1}/{n_questions}:\n{question_text}", reply_markup=markup)
 
 
 async def get_questions_and_answers(message: types.Message) -> None:
@@ -57,9 +59,18 @@ async def get_questions_and_answers(message: types.Message) -> None:
 async def call_answers(call: types.CallbackQuery) -> None:
     _, q_id, _, ans_id = call.data.split(':')
     correct_answer, correct_answer_id = await get_correct_answer(question_id=q_id)
-
     n_questions = await get_questions_num()
 
+    is_correct_answer = int(ans_id) == int(correct_answer_id)
+
+    # TODO: УЗНАТЬ КАК ПОЛУЧИТЬ ВСЕ ОТВЕТЫ ЗА ТЕКУЩУЮ СЕССИЮ
+    
+    await add_user_answer(
+        user_id=call.from_user.id,
+        question_id=q_id,
+        answer_id=ans_id,
+        is_correct_answer=is_correct_answer
+    )
 
     all_data = await get_question_by_id((int(q_id)+1) if int(q_id) < n_questions else 1)
     question_text = all_data[0][1]
@@ -68,12 +79,15 @@ async def call_answers(call: types.CallbackQuery) -> None:
     # Клавиатура, на которую надо поменять в случае правильного ответа
     markup = await generate_answers_keyboard(int(q_id)+1 if int(q_id) != n_questions else 1)
     finish_markup = await generate_cancel_keyboard()
-    if int(ans_id) == int(correct_answer_id):
+
+
+
+    if is_correct_answer:
         # await call.answer(text="✅")
         # await call.message.answer(text=question_text, reply_markup=markup)
         if int(q_id) == n_questions:
             await call.message.edit_text(
-                f"Тест завершен. Нажмите на кнопку ниже, чтобы вернуться в главное меню.", 
+                f"Тест завершен. Ваша статистика:\nНажмите на кнопку ниже, чтобы вернуться в главное меню.", 
                 reply_markup=finish_markup
             )
         else:

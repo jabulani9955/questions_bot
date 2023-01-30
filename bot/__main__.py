@@ -25,7 +25,7 @@ async def main() -> None:
         commands_for_bot.append(BotCommand(command=cmd[0], description=cmd[1]))
 
     dp = Dispatcher()
-    bot = Bot(token=os.getenv('BOT_TOKEN'))
+    bot = Bot(token=os.getenv('BOT_TOKEN'), parse_mode='HTML')
     await bot.set_my_commands(commands=commands_for_bot)
 
     register_user_commands(dp)

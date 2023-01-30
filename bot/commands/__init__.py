@@ -19,7 +19,7 @@ from strucrures.fsm_groups import QuestionsState
 
 def register_user_commands(router: Router) -> None:
     router.message.register(start, CommandStart())
-    router.message.register(help_command, Command(commands=['help']))
+    router.message.register(help_func, Command(commands=['help']))
     router.message.register(start, F.text=='Старт')
     router.message.register(help_func, F.text=='Помощь')
     # router.message.register(call_questions, Command(commands=['questions']))

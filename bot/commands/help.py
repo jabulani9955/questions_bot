@@ -19,9 +19,8 @@ async def help_command(message: types.Message, command: CommandObject) -> None:
     
 
 async def help_func(message: types.Message) -> None:
-    return await message.answer(
-        'Помощь и справка о боте.\n'
-        'Используй /help <команда>, чтобы получить информацию о команде.\n'
+    await message.answer(
+        'Отвечай на вопросы!!!\n'
     )
 
 

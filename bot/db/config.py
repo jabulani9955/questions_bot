@@ -24,7 +24,7 @@ CREATE_QUERIES = {
     "CREATE_ANSWERS": """
         CREATE TABLE IF NOT EXISTS answers (
             id SERIAL PRIMARY KEY,
-            question_id INTEGER REFERENCES questions(id),
+            question_id INTEGER REFERENCES questions(id) NOT NULL,
             answer VARCHAR(255) NOT NULL,
             created_at TIMESTAMP NOT NULL,
             is_correct BOOLEAN NOT NULL DEFAULT false
@@ -33,8 +33,22 @@ CREATE_QUERIES = {
     "CREATE_USERS": """
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
-            username VARCHAR(255) NOT NULL
+            user_id BIGINT NOT NULL,
+            username VARCHAR,
+            first_name VARCHAR,
+            last_name VARCHAR,
+            first_login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
         );
+    """,
+    "CREATE_USER_ANSWERS": """
+        CREATE TABLE IF NOT EXISTS user_answers (
+            id SERIAL PRIMARY KEY,
+            user_id BIGINT NOT NULL,
+            question_id INTEGER REFERENCES questions(id),
+            answer_id INTEGER REFERENCES answers(id) NOT NULL,
+            answer_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            is_correct_answer BOOLEAN NOT NULL
+        )
     """
 }
 INSERT_QUERIES = {
@@ -74,13 +88,25 @@ INSERT_QUERIES = {
             (6, 'Луну', NOW(), true),
             (6, 'Грибы', NOW(), false);
     """,
-    "INSERT_INTO_USERS": """
-        INSERT INTO users (username) VALUES
-            ('user1'),
-            ('user2'),
-            ('user3'),
-            ('user4'),
-            ('user5'); 
+    "ADD_USER": """
+        INSERT INTO users (
+            user_id,
+            username,
+            first_name,
+            last_name,
+            first_login_time
+        ) VALUES (
+            %s,
+            %s,
+            %s,
+            %s,
+            NOW()
+        );
+    """,
+    "ADD_USER_ANSWER": """
+        INSERT INTO user_answers (
+            user_id, question_id, answer_id, answer_date, is_correct_answer) VALUES (
+            %s, %s, %s, NOW(), %s);
     """
 }
 GET_QUERIES = {
@@ -124,6 +150,9 @@ GET_QUERIES = {
         FROM questions
         JOIN answers ON questions.id = answers.question_id
         WHERE question_id = %s
+    """,
+    "GET_USER_BY_ID": """
+        SELECT * FROM users WHERE user_id = %s;
     """
 }
 
