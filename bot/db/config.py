@@ -17,6 +17,7 @@ CREATE_QUERIES = {
     "CREATE_QUESTIONS": """
         CREATE TABLE IF NOT EXISTS questions (
             id SERIAL PRIMARY KEY,
+            test_id INTEGER NOT NULL,
             question VARCHAR(255) NOT NULL,
             created_at TIMESTAMP NOT NULL
         );
@@ -24,6 +25,7 @@ CREATE_QUERIES = {
     "CREATE_ANSWERS": """
         CREATE TABLE IF NOT EXISTS answers (
             id SERIAL PRIMARY KEY,
+            test_id INTEGER REFERENCES questions(test_id) NOT NULL,
             question_id INTEGER REFERENCES questions(id) NOT NULL,
             answer VARCHAR(255) NOT NULL,
             created_at TIMESTAMP NOT NULL,
@@ -44,6 +46,7 @@ CREATE_QUERIES = {
         CREATE TABLE IF NOT EXISTS user_answers (
             id SERIAL PRIMARY KEY,
             user_id BIGINT NOT NULL,
+            test_id INTEGER REFERENCES questions(test_id) NOT NULL,
             question_id INTEGER REFERENCES questions(id),
             answer_id INTEGER REFERENCES answers(id) NOT NULL,
             answer_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,

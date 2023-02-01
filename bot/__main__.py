@@ -8,6 +8,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from sqlalchemy.engine import URL
 
 from commands import register_user_commands, bot_commands
+from db.db import initial_creation
 # from db import BaseModel, create_async_engine, get_session_maker, proceed_schemas
 # from db.db_commands import DataBase
 
@@ -20,6 +21,7 @@ logging.basicConfig(
 
 async def main() -> None:
     commands_for_bot = []
+    await initial_creation()
 
     for cmd in bot_commands:
         commands_for_bot.append(BotCommand(command=cmd[0], description=cmd[1]))
