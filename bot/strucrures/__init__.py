@@ -1,4 +1,1 @@
-__all__ = (
-    'keyboards',
-    'fsm_groups',
-)
+__all__ = ('keyboards',)

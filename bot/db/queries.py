@@ -1,18 +1,3 @@
-import os
-
-from dotenv import load_dotenv
-
-
-load_dotenv()
-
-DB_PARAMS = {
-    "host": "localhost",
-    "user": os.getenv("db_user"),
-    "password": os.getenv("db_pass"),
-    # "database": os.getenv("db_name")
-    "database": os.getenv("db_name_example")    
-}
-
 CREATE_QUERIES = {
     "CREATE_QUESTIONS": """
         CREATE TABLE IF NOT EXISTS questions (
@@ -51,18 +36,18 @@ CREATE_QUERIES = {
             answer_id INTEGER REFERENCES answers(id) NOT NULL,
             answer_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
             is_correct_answer BOOLEAN NOT NULL
-        )
+        );
     """
 }
 INSERT_QUERIES = {
     "INSERT_INTO_QUESTIONS": """
-        INSERT INTO questions (question, created_at) VALUES
-            ('What is the capital of France?', NOW()),
-            ('What is the largest planet in our solar system?', NOW()),
-            ('What is the most populous country in the world?', NOW()),
-            ('На каком озере произошло Ледовое побоище?', NOW()),
-            ('Какое название носит основной отчёт у бухгалтеров?', NOW()),
-            ('Что изучает Селенолог?', NOW());
+        INSERT INTO questions (test_id, question, created_at) VALUES
+            (1, 'What is the capital of France?', NOW()),
+            (1, 'What is the largest planet in our solar system?', NOW()),
+            (1, 'What is the most populous country in the world?', NOW()),
+            (1, 'На каком озере произошло Ледовое побоище?', NOW()),
+            (1, 'Какое название носит основной отчёт у бухгалтеров?', NOW()),
+            (1, 'Что изучает Селенолог?', NOW());
     """,
     "INSERT_INTO_ANSWERS": """
         INSERT INTO answers (question_id, answer, created_at, is_correct) VALUES
@@ -99,17 +84,17 @@ INSERT_QUERIES = {
             last_name,
             first_login_time
         ) VALUES (
-            %s,
-            %s,
-            %s,
-            %s,
+            $1,
+            $2,
+            $3,
+            $4,
             NOW()
         );
     """,
     "ADD_USER_ANSWER": """
         INSERT INTO user_answers (
             user_id, question_id, answer_id, answer_date, is_correct_answer) VALUES (
-            %s, %s, %s, NOW(), %s);
+            $1, $2, $3, NOW(), $4);
     """
 }
 GET_QUERIES = {
@@ -137,7 +122,7 @@ GET_QUERIES = {
             answers.id as answer_id
         FROM questions
         JOIN answers ON questions.id = answers.question_id
-        WHERE questions.id = %s and answers.is_correct = true
+        WHERE questions.id = $1 and answers.is_correct = true
     """,
     "GET_NUM_QUESTIONS": """
         SELECT COUNT(DISTINCT questions.id) as n_questions
@@ -152,10 +137,9 @@ GET_QUERIES = {
             answers.is_correct
         FROM questions
         JOIN answers ON questions.id = answers.question_id
-        WHERE question_id = %s
+        WHERE question_id = $1
     """,
     "GET_USER_BY_ID": """
-        SELECT * FROM users WHERE user_id = %s;
+        SELECT * FROM users WHERE user_id = $1;
     """
 }
-

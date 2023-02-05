@@ -1,0 +1,1 @@
+pg_restore -U postgres -d example_db example_backup.sql
