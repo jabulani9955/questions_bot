@@ -8,6 +8,7 @@ class DB:
     def __init__(
         self,
         name: str,
+        host: str,
         user: str,
         password: str,
         port: str,
@@ -15,6 +16,7 @@ class DB:
         pool: asyncpg.pool.Pool
     ) -> None:
         self.name = name
+        self.host = host
         self.user = user
         self.password = password
         self.port = port
@@ -22,6 +24,7 @@ class DB:
         self.pool = loop.run_until_complete(
             asyncpg.create_pool(
                 database=name,
+                host=host,
                 user=user,
                 password=password,
                 port=port
