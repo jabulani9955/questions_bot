@@ -7,38 +7,29 @@ from bot.db.queries import CREATE_QUERIES, INSERT_QUERIES, GET_QUERIES
 class DB:
     def __init__(
         self,
-        name: str,
-        host: str,
-        user: str,
-        password: str,
-        port: str,
+        dsn: str,
         loop: AbstractEventLoop,
         pool: asyncpg.pool.Pool
     ) -> None:
-        self.name = name
-        self.host = host
-        self.user = user
-        self.password = password
-        self.port = port
+        self.dsn = dsn
         self.loop = loop
         self.pool = loop.run_until_complete(
             asyncpg.create_pool(
-                database=name,
-                host=host,
-                user=user,
-                password=password,
-                port=port
+                dsn=dsn,
+                loop=loop
             )
         )
+    async def get_tests_list(self) -> list[asyncpg.Record]:
+        return await self.pool.fetch(GET_QUERIES['GET_TESTS'])
 
-    async def get_correct_answer(self, question_id: int) -> asyncpg.Record:
-        return await self.pool.fetchrow(GET_QUERIES['GET_CORRECT_ANSWER'], question_id)
+    async def get_correct_answer(self, test_id: int, question_id: int) -> asyncpg.Record:
+        return await self.pool.fetchrow(GET_QUERIES['GET_CORRECT_ANSWER'], test_id, question_id)
 
-    async def get_questions_num(self) -> int:
-        return await self.pool.fetchval(GET_QUERIES['GET_NUM_QUESTIONS'])
+    async def get_questions_num(self, test_id: int) -> int:
+        return await self.pool.fetchval(GET_QUERIES['GET_NUM_QUESTIONS'], test_id)
 
-    async def get_question_by_id(self, question_id: int) -> list[asyncpg.Record]:
-        return await self.pool.fetch(GET_QUERIES['GET_QUESTION_BY_ID'], question_id)
+    async def get_question_by_id(self, test_id: int, question_id: int) -> list[asyncpg.Record]:
+        return await self.pool.fetch(GET_QUERIES['GET_QUESTION_BY_ID'], test_id, question_id)
 
     async def is_user_exist(self, user_id: int):
         return await self.pool.fetchrow(GET_QUERIES['GET_USER_BY_ID'], user_id)
@@ -74,7 +65,8 @@ class DB:
 
     async def add_user_answer(
         self, 
-        user_id: int, 
+        user_id: int,
+        test_id: int,
         question_id: int, 
         answer_id: int, 
         is_correct_answer: True | False
@@ -82,7 +74,8 @@ class DB:
         await self.pool.execute(
             INSERT_QUERIES['ADD_USER_ANSWER'], 
             user_id, 
-            question_id, 
+            test_id,
+            question_id,
             answer_id, 
             is_correct_answer
         )

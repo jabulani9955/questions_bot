@@ -16,6 +16,7 @@ def register_user_commands(router: Router) -> None:
     router.message.register(help_func, Command(commands=['help']))
     router.message.register(start, F.text=='Старт') 
 
-    router.callback_query.register(call_questions, F.data=='take_test')
-    router.callback_query.register(call_answers, F.data.startswith('question:'))
-    router.callback_query.register(call_start, F.data.startswith('back'))
+    router.callback_query.register(call_questions, F.data.startswith('start_test:'))
+    router.callback_query.register(call_answers, F.data.startswith('test'))
+    router.callback_query.register(call_start, F.data=='back')
+    # router.callback_query.register(call_tests, F.data.startswith('test'))

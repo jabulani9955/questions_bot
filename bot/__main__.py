@@ -5,7 +5,7 @@ from aiogram import Dispatcher, Bot
 from aiogram.types import BotCommand
 
 from bot.commands import register_user_commands, bot_commands
-from bot.db.loader import token, db
+from bot.db.loader import token, db, loop
 
 
 logging.basicConfig(
@@ -16,7 +16,7 @@ logging.basicConfig(
 
 
 async def main() -> None:
-    await db.initial_creation()
+    # await db.initial_creation()
     
     dp = Dispatcher()
     bot = Bot(token=token, parse_mode='HTML')
@@ -33,6 +33,6 @@ async def main() -> None:
 
 if __name__ == '__main__':
     try:
-        asyncio.get_event_loop().run_until_complete(main())
+        loop.run_until_complete(main())
     except KeyboardInterrupt:
         pass
