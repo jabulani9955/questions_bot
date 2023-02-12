@@ -36,17 +36,12 @@ class DB:
 
     async def initial_creation(self):
         """ Функция для первоначального создания таблиц. """
-
+        
+        await self.pool.execute(CREATE_QUERIES['CREATE_TESTS'])        
         await self.pool.execute(CREATE_QUERIES['CREATE_USERS'])
         await self.pool.execute(CREATE_QUERIES['CREATE_QUESTIONS'])
         await self.pool.execute(CREATE_QUERIES['CREATE_ANSWERS'])
         await self.pool.execute(CREATE_QUERIES['CREATE_USER_ANSWERS'])
-        
-    async def table_filling(self):
-        """ Функция для заполнения таблиц значениями. """
-
-        await self.pool.execute(INSERT_QUERIES['INSERT_INTO_QUESTIONS'])
-        await self.pool.execute(INSERT_QUERIES['INSERT_INTO_ANSWERS'])
 
     async def add_user(
         self, 
