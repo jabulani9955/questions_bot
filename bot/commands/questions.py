@@ -20,7 +20,7 @@ async def call_questions(call: types.CallbackQuery):
     answers = [(i[1], i[2]) for i in all_data]
     shuffle(answers)
     
-    if any(len(i[1]) > 55 for i in answers):
+    if any(len(i[1]) > 35 for i in answers):
         output_ans = '\n'
         for i, (_, ans) in enumerate(answers, start=1):
             ans = " ".join(ans.strip().split())
@@ -56,7 +56,7 @@ async def call_answers(call: types.CallbackQuery) -> None:
     shuffle(answers)
     
     # Клавиатура, на которую надо поменять в случае правильного ответа
-    if any(len(i[1]) > 55 for i in answers):
+    if any(len(i[1]) > 35 for i in answers):
         output_ans = '\n'
         for i, (_, ans) in enumerate(answers, start=1):
             ans = " ".join(ans.strip().split())

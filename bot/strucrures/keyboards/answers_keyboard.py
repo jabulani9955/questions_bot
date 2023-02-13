@@ -21,10 +21,7 @@ async def generate_answers_keyboard(test_id: int, question_num: int):
 
     answers_kb.button(text="↩️ Вернуться", callback_data="back")
 
-    if len(answers)%2:
-        answers_kb.adjust(1)
-    else:
-        answers_kb.adjust(2, 2, 1)
+    answers_kb.adjust(1)
     return answers_kb.as_markup()
 
 
