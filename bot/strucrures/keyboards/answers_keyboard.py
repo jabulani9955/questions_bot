@@ -42,4 +42,3 @@ async def generate_digits_buttons(test_id: int, question_num: list, answers: lis
     else:
         digits_kb.adjust(2, 2, 1)
     return digits_kb.as_markup()
-
