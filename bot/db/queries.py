@@ -9,6 +9,7 @@ CREATE_QUERIES = {
         CREATE TABLE IF NOT EXISTS questions (
             id SERIAL PRIMARY KEY,
             test_id INTEGER REFERENCES tests(id) NOT NULL,
+            question_num INTEGER NOT NULL,
             question VARCHAR NOT NULL,
             created_at TIMESTAMP NOT NULL
         );
@@ -18,6 +19,7 @@ CREATE_QUERIES = {
             id SERIAL PRIMARY KEY,
             test_id INTEGER REFERENCES tests(id) NOT NULL,
             question_id INTEGER REFERENCES questions(id) NOT NULL,
+            question_num INTEGER NOT NULL,
             answer VARCHAR NOT NULL,
             created_at TIMESTAMP NOT NULL,
             is_correct BOOLEAN NOT NULL DEFAULT false
@@ -38,7 +40,7 @@ CREATE_QUERIES = {
             id SERIAL PRIMARY KEY,
             user_id BIGINT NOT NULL,
             test_id INTEGER REFERENCES tests(id) NOT NULL,
-            question_id INTEGER REFERENCES questions(id),
+            question_num INTEGER NOT NULL,
             answer_id INTEGER REFERENCES answers(id) NOT NULL,
             answer_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
             is_correct_answer BOOLEAN NOT NULL
@@ -63,7 +65,7 @@ INSERT_QUERIES = {
     """,
     "ADD_USER_ANSWER": """
         INSERT INTO user_answers (
-            user_id, test_id, question_id, answer_id, answer_date, is_correct_answer) VALUES (
+            user_id, test_id, question_num, answer_id, answer_date, is_correct_answer) VALUES (
             $1, $2, $3, $4, NOW(), $5);
     """
 }
@@ -73,11 +75,9 @@ GET_QUERIES = {
     """,
     "GET_CORRECT_ANSWER": """
         SELECT
-            answers.answer,
-            answers.id as answer_id
-        FROM questions
-        JOIN answers ON questions.id = answers.question_id
-        WHERE questions.test_id = $1 AND questions.id = $2 and answers.is_correct = true
+            answer, id 
+        FROM answers
+        WHERE test_id = $1 AND question_num = $2 AND is_correct=true;
     """,
     "GET_NUM_QUESTIONS": """
         SELECT COUNT(DISTINCT questions.id) as n_questions
@@ -90,9 +90,14 @@ GET_QUERIES = {
             answers.id as answer_id, 
             answers.answer
         FROM questions JOIN answers ON questions.id = answers.question_id
-        WHERE questions.test_id = $1 AND question_id = $2
+        WHERE questions.test_id = $1 AND questions.question_num = $2
     """,
     "GET_USER_BY_ID": """
         SELECT * FROM users WHERE user_id = $1;
+    """,
+    "GET_FIRST_QUESTION_ID": """
+        SELECT MIN(id) 
+        FROM questions
+        WHERE questions.test_id = $1
     """
 }
